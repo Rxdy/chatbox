@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Chat WebSocket</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            #messages {
+                border: 1px solid #ccc;
+                padding: 10px;
+                height: 300px;
+                overflow-y: auto;
+                margin-bottom: 10px;
+            }
+            .message {
+                margin: 5px 0;
+            }
+            .system {
+                color: gray;
+                font-style: italic;
+            }
+            .error {
+                color: red;
+            }
+            .success {
+                color: green;
+            }
+            #authForm,
+            #chatArea {
+                margin-bottom: 20px;
+            }
+            #chatArea {
+                display: none;
+            }
+            input,
+            button {
+                margin: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="authForm">
+            <h3>Connexion / Inscription</h3>
+            <input id="username" type="text" placeholder="Nom d’utilisateur" />
+            <input id="password" type="password" placeholder="Mot de passe" />
+            <button onclick="register()">S’inscrire</button>
+            <button onclick="login()">Se connecter</button>
+        </div>
+        <div id="chatArea">
+            <div id="messages"></div>
+            <input
+                id="messageInput"
+                type="text"
+                placeholder="Tapez votre message..."
+            />
+            <button onclick="sendMessage()">Envoyer</button>
+        </div>
+
+        <script>
+            const ws = new WebSocket("ws://localhost:8080");
+            const messagesDiv = document.getElementById("messages");
+            const messageInput = document.getElementById("messageInput");
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
+            const authForm = document.getElementById("authForm");
+            const chatArea = document.getElementById("chatArea");
+            let isAuthenticated = false;
+
+            ws.onopen = () => {
+                console.log("Connecté au serveur.");
+                addMessage(
+                    "Connecté. Entrez vos identifiants pour vous inscrire ou vous connecter.",
+                    "system"
+                );
+            };
+
+            ws.onmessage = (event) => {
+                console.log("Message reçu :", event.data);
+                const data = JSON.parse(event.data);
+                switch (data.type) {
+                    case "welcome":
+                    case "system":
+                        addMessage(data.message, "system");
+                        break;
+                    case "error":
+                        addMessage(data.message, "error");
+                        break;
+                    case "success":
+                        addMessage(data.message, "success");
+                        if (data.message.includes("Connecté en tant que")) {
+                            isAuthenticated = true;
+                            authForm.style.display = "none";
+                            chatArea.style.display = "block";
+                        }
+                        break;
+                    case "message":
+                        addMessage(`${data.from}: ${data.content}`, "message");
+                        break;
+                    default:
+                        console.warn("Type inconnu:", data);
+                }
+            };
+
+            ws.onclose = (event) => {
+                console.log(
+                    "Déconnexion. Code :",
+                    event.code,
+                    "Raison :",
+                    event.reason
+                );
+                addMessage("Déconnecté du serveur.", "error");
+                isAuthenticated = false;
+                authForm.style.display = "block";
+                chatArea.style.display = "none";
+                messageInput.disabled = true;
+            };
+
+            ws.onerror = (error) => {
+                console.error("Erreur WebSocket :", error);
+                addMessage("Une erreur est survenue.", "error");
+            };
+
+            function addMessage(content, type) {
+                const p = document.createElement("p");
+                p.textContent = content;
+                p.className = type;
+                messagesDiv.appendChild(p);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            function register() {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+                if (username && password && ws.readyState === WebSocket.OPEN) {
+                    ws.send(
+                        JSON.stringify({
+                            action: "register",
+                            username,
+                            password,
+                        })
+                    );
+                    usernameInput.value = "";
+                    passwordInput.value = "";
+                } else {
+                    addMessage("Veuillez remplir tous les champs.", "error");
+                }
+            }
+
+            function login() {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+                if (username && password && ws.readyState === WebSocket.OPEN) {
+                    ws.send(
+                        JSON.stringify({ action: "login", username, password })
+                    );
+                    usernameInput.value = "";
+                    passwordInput.value = "";
+                } else {
+                    addMessage("Veuillez remplir tous les champs.", "error");
+                }
+            }
+
+            function sendMessage() {
+                const input = messageInput.value.trim();
+                if (
+                    input &&
+                    ws.readyState === WebSocket.OPEN &&
+                    isAuthenticated
+                ) {
+                    ws.send(
+                        JSON.stringify({ action: "message", content: input })
+                    );
+                    addMessage(`Moi: ${input}`, "message");
+                    messageInput.value = "";
+                }
+            }
+
+            messageInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter" && isAuthenticated) sendMessage();
+            });
+        </script>
+    </body>
+</html>

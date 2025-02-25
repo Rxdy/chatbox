@@ -1,0 +1,16 @@
+{
+  "Rudy": {
+    "registeredAt": "2025-02-25T20:40:25.606Z"
+  },
+  "Bob": {
+    "registeredAt": "2025-02-25T20:41:00.782Z"
+  },
+  "Alice": {
+    "registeredAt": "2025-02-25T20:44:37.139Z"
+  },
+  "rere": {
+    "username": "rere",
+    "passwordHash": "$2b$10$JF5JvOss6cMVco1VFjBRIuuJdSGjkFRzX2HlvtefczDf7Vqnl/UTO",
+    "registeredAt": "2025-02-25T21:10:50.114Z"
+  }
+}
