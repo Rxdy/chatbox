@@ -1,4 +1,6 @@
 # Commandes Podman pour gérer un pod
+## Droit d'execution (sur le dossier chatbox): 
+chmod -R u+rwX chatbox
 
 ## Créé le Network : 
 podman network create chat-net
