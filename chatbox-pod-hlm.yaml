@@ -31,11 +31,11 @@ spec:
   volumes:
     - name: server-volume
       hostPath:
-        path: ./server
+        path: /Users/hlm/Library/CloudStorage/ProtonDrive-hugolagouardat@proton.me-folder/PROJET/chatbox/server
     - name: data-volume
       hostPath:
-        path: ./server/data
+        path: /Users/hlm/Library/CloudStorage/ProtonDrive-hugolagouardat@proton.me-folder/PROJET/chatbox/server/data
     - name: client-volume
       hostPath:
-        path: ./client
+        path: /Users/hlm/Library/CloudStorage/ProtonDrive-hugolagouardat@proton.me-folder/PROJET/chatbox/client
   restartPolicy: Never

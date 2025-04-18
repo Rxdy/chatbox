@@ -1,5 +1,8 @@
 # Commandes Podman pour gérer un pod
 
+## Créé le Network : 
+podman network create chat-net
+
 ## Créer le pod : 
 podman play kube chatbox-pod.yaml --network chat-net --publish 8080:8080 --publish 5173:5173
 
