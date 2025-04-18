@@ -12,5 +12,15 @@
     "username": "rere",
     "passwordHash": "$2b$10$JF5JvOss6cMVco1VFjBRIuuJdSGjkFRzX2HlvtefczDf7Vqnl/UTO",
     "registeredAt": "2025-02-25T21:10:50.114Z"
+  },
+  "hugo": {
+    "username": "hugo",
+    "passwordHash": "$2b$10$QVZdcs4crex/COie1fkPKubuml/0Uj4.MNkEpfboT0EkV3w//W4U6",
+    "registeredAt": "2025-04-18T10:32:22.398Z"
+  },
+  "lucas": {
+    "username": "lucas",
+    "passwordHash": "$2b$10$8UqbshDIXaXrbTyjoJrP5.FhEsaHks02IsTPr1NB4x8aCRnX5n1xC",
+    "registeredAt": "2025-04-18T10:32:49.130Z"
   }
 }

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: chatbox
+  labels:
+    app: chatbox
+spec:
+  containers:
+    - name: chatbox-server
+      image: node:18
+      ports:
+        - containerPort: 8080
+      workingDir: /server
+      command: ["sh", "-c", "npm install && npx ts-node src/server.ts"]
+      volumeMounts:
+        - name: server-volume
+          mountPath: /server
+        - name: data-volume
+          mountPath: /server/data
+
+    - name: chatbox-client
+      image: node:18-alpine
+      ports:
+        - containerPort: 5173
+      workingDir: /client
+      command: ["sh", "-c", "npm install && npm run dev"]
+      volumeMounts:
+        - name: client-volume
+          mountPath: /client
+
+  volumes:
+    - name: server-volume
+      hostPath:
+        path: /Users/hlm/Library/CloudStorage/ProtonDrive-hugolagouardat@proton.me-folder/PROJET/chatbox/server
+    - name: data-volume
+      hostPath:
+        path: /Users/hlm/Library/CloudStorage/ProtonDrive-hugolagouardat@proton.me-folder/PROJET/chatbox/server/data
+    - name: client-volume
+      hostPath:
+        path: /Users/hlm/Library/CloudStorage/ProtonDrive-hugolagouardat@proton.me-folder/PROJET/chatbox/client
+  restartPolicy: Never
